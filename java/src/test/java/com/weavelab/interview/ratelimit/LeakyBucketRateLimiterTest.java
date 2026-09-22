@@ -70,6 +70,17 @@ class LeakyBucketRateLimiterTest {
     }
 
     @Test
+    void rejectsRequestBeforeEnoughCapacityHasLeaked() {
+        for (int i = 0; i < 10; i++) {
+            assertTrue(limiter.tryAcquire());
+        }
+
+        clock.advance(Duration.ofSeconds(5));
+
+        assertFalse(limiter.tryAcquire());
+    }
+    
+    @Test
     void doesNotExceedCapacityUnderConcurrentRequests()
             throws InterruptedException {
 
